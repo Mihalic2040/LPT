@@ -15,6 +15,9 @@ def bootstrap_rootfs(arch):
     print("prems seted")
 
 def build_scripts():
+    print("Creting user")
+    os.system("""sudo chroot ./rootfs useradd -m -s /bin/bash -c "LPT" -U lpt""")
+    os.system("sudo chroot ./rootfs passwd lpt")
 
 
     print("Starting build a scripts")
@@ -26,15 +29,25 @@ def build_scripts():
     os.system("sudo chroot ./rootfs /scripts/build.sh")
 
 def create_tar_gz(folder_path, output_path):
-    os.system("tar -czf "+ output_path +" -C "+ folder_path +" .")
+    os.system("tar -cf "+ output_path +" -C "+ folder_path +" .")
 # Specify the folder path and output path for the archive
 folder_path = "./rootfs"
-output_path = "./build/archive.tar.gz"
+output_path = "./build/archive.tar"
 
 
-
+# def create_img(rootfs_path, output_path, size_gb):
+#     os.system("fallocate -l " + str(size_gb) + "G " + output_path)
+#     os.system("sudo mkfs.ext4 " + output_path)
+#     os.system("sudo mkdir -p /mnt/tmp")
+#     os.system("sudo mount " + output_path + " /mnt/tmp")
+#     os.system("sudo cp -a " + rootfs_path + "/. /mnt/tmp")
+#     os.system("sudo umount /mnt/tmp")
+#     os.system("sudo rmdir /mnt/tmp")
 
 if __name__ == "__main__":
+    rootfs_path = "./rootfs"
+    output_img_path = "./build/rootfs.img"
+    image_size_gb = 3
 
     print("Star building...")
     # Create the tar.gz archive
