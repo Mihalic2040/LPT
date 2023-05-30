@@ -1,38 +1,63 @@
 import os
 import tarfile
+from libs.log4py import *
+
+
+
+architecture = "arm64" # amd64 or armhf, arm64
+
+
+folder_path = "./rootfs"
+bundle_path = "./build"
+
+
+
+def prepare():
+    
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        Warning(f"Folder created: {folder_path}")
+    else:
+        Log(f"Folder already exists: {folder_path}")
+
+    if not os.path.exists(bundle_path):
+        os.makedirs(bundle_path)
+        Warning(f"Folder created: {bundle_path}")
+    else:
+        Log(f"Folder already exists: {bundle_path}")
+
 
 def bootstrap_rootfs(arch):
-    print("Cleaning rootfs")
+    Warning("Cleaning ROOTFS")
     os.system("sudo rm -r ./rootfs/*")
-    print("ROOTFS cleaned")
+    Log("ROOTFS Cleaned")
 
-    print("Stating creating rootfs")
+    Log("Stating creating ROOTFS")
     
     os.system('sudo debootstrap --arch='+ arch +' stable ./rootfs/ http://deb.debian.org/debian/')
-    print("ROOTFS created")
-    print("Creating perms")
+    Log("ROOTFS created")
+    Log("Creating perms")
     os.system("sudo chmod +x ./rootfs/root")
-    print("prems seted")
+    Log("Perms created")
 
 def build_scripts():
-    print("Creting user")
-    os.system("""sudo chroot ./rootfs useradd -m -s /bin/bash -c "LPT" -U lpt""")
-    os.system("sudo chroot ./rootfs passwd lpt")
 
-
-    print("Starting build a scripts")
+    Log("Starting build a scripts")
     os.system("chmod +x ./scripts/*")
     os.system("cp -r ./scripts ./rootfs/.")
-    print("scripts builded")
+    print("Scripts builded")
 
-    print("Running build")
+    Warning("Running build")
     os.system("sudo chroot ./rootfs /scripts/build.sh")
 
 def create_tar_gz(folder_path, output_path):
+
+    Log("Creating ROOTFS bundle")
     os.system("tar -cf "+ output_path +" -C "+ folder_path +" .")
+    Log("Bundle created")
+
 # Specify the folder path and output path for the archive
-folder_path = "./rootfs"
-output_path = "./build/archive.tar"
 
 
 # def create_img(rootfs_path, output_path, size_gb):
@@ -44,16 +69,30 @@ output_path = "./build/archive.tar"
 #     os.system("sudo umount /mnt/tmp")
 #     os.system("sudo rmdir /mnt/tmp")
 
-if __name__ == "__main__":
-    rootfs_path = "./rootfs"
-    output_img_path = "./build/rootfs.img"
-    image_size_gb = 3
+logo = """
+ (    (            
+ )\ ) )\ )  *   )  
+(()/((()/(` )  /(  
+ /(_))/(_))( )(_)) 
+(_)) (_)) (_(_())  
+| |  | _ \|_   _|  
+| |__|  _/  | |    
+|____|_|    |_|    
+"""
 
-    print("Star building...")
+if __name__ == "__main__":
+    Log("Star building...")
+    prepare()
     # Create the tar.gz archive
 
-    bootstrap_rootfs('amd64') # amd64 or armhf
+    output_path = bundle_path + "/rootfs.tar"
+
+    bootstrap_rootfs(architecture) # amd64 or armhf, arm64
     build_scripts()
     create_tar_gz(folder_path, output_path)
 
-    print("Archive created successfully!")
+    Log("BUILD DONE: Happy hacking!")
+
+    Log(logo)
+
+    Warning("To enter chroot: chroot . /bin/bash --rcfile ./scripts/env.sh")
