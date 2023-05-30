@@ -1,11 +1,21 @@
 import os
 import tarfile
 from libs.log4py import *
+import argparse
+
+parser = argparse.ArgumentParser(
+                    prog='LPT',
+                    description='LightPentestToolkit Builder',
+                    epilog='I use arch BTW')
+parser.add_argument('-a', '--arch')
+args = parser.parse_args()
 
 
 
-architecture = "arm64" # amd64 or armhf, arm64
+architecture = args.arch # amd64 or armhf, arm64
 
+if args.arch == None:
+    architecture = "amd64" # amd64 or armhf, arm64
 
 folder_path = "./rootfs"
 bundle_path = "./build"
@@ -82,6 +92,8 @@ logo = """
 
 if __name__ == "__main__":
     Log("Star building...")
+    Log("Architecture: " + architecture)
+
     prepare()
     # Create the tar.gz archive
 
@@ -96,3 +108,4 @@ if __name__ == "__main__":
     Log(logo)
 
     Warning("To enter chroot: chroot . /bin/bash --rcfile ./scripts/env.sh")
+    Warning("To compile bundle in other arch use flag -a or --arch <<Like tihs -a arm64, --arch amd64>>")
