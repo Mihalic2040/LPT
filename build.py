@@ -6,8 +6,9 @@ import argparse
 parser = argparse.ArgumentParser(
                     prog='LPT',
                     description='LightPentestToolkit Builder',
-                    epilog='I use arch BTW')
+                    epilog='With great power comes great responsibility')
 parser.add_argument('-a', '--arch')
+parser.add_argument('-b', '--rebuild', action='store_true')
 args = parser.parse_args()
 
 
@@ -98,8 +99,9 @@ if __name__ == "__main__":
     # Create the tar.gz archive
 
     output_path = bundle_path + "/rootfs.tar"
+    if args.rebuild:
+        bootstrap_rootfs(architecture) # amd64 or armhf, arm64
 
-    bootstrap_rootfs(architecture) # amd64 or armhf, arm64
     build_scripts()
     create_tar_gz(folder_path, output_path)
 
