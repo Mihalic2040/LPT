@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-MOUNT_DIR="/data/LPT"
+MOUNT_DIR=$PWD
 MOUNTED=false
 
 # Function to unmount the filesystem

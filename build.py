@@ -1,3 +1,4 @@
+#!/bin/python3
 import os
 import tarfile
 from libs.log4py import *
@@ -65,7 +66,7 @@ def build_scripts():
 def create_tar_gz(folder_path, output_path):
 
     Log("Creating ROOTFS bundle")
-    os.system("tar -cf "+ output_path +" -C "+ folder_path +" .")
+    os.system("sudo tar -cf "+ output_path +" -C "+ folder_path +" .")
     Log("Bundle created")
 
 # Specify the folder path and output path for the archive
